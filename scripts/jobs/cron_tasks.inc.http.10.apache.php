@@ -95,15 +95,6 @@ class apache extends HttpConfigBase
 			$custom_opts = Settings::Get('system.apacheglobaldiropt');
 			if (! empty($custom_opts)) {
 				$this->virtualhosts_data[$vhosts_filename] .= $custom_opts . "\n";
-			} else {
-				// >=apache-2.4 enabled?
-				if (Settings::Get('system.apache24') == '1') {
-					$this->virtualhosts_data[$vhosts_filename] .= '    Require all granted' . "\n";
-					$this->virtualhosts_data[$vhosts_filename] .= '    AllowOverride All' . "\n";
-				} else {
-					$this->virtualhosts_data[$vhosts_filename] .= '    Order allow,deny' . "\n";
-					$this->virtualhosts_data[$vhosts_filename] .= '    allow from all' . "\n";
-				}
 			}
 			$this->virtualhosts_data[$vhosts_filename] .= '  </Directory>' . "\n";
 		}
@@ -262,19 +253,6 @@ class apache extends HttpConfigBase
 							}
 							$this->virtualhosts_data[$vhosts_filename] .= '      Options +ExecCGI' . "\n";
 							$this->virtualhosts_data[$vhosts_filename] .= '    </FilesMatch>' . "\n";
-							// >=apache-2.4 enabled?
-							if (Settings::Get('system.apache24') == '1') {
-								$mypath_dir = new frxDirectory($mypath);
-								// only create the require all granted if there is not active directory-protection
-								// for this path, as this would be the first require and therefore grant all access
-								if ($mypath_dir->isUserProtected() == false) {
-									$this->virtualhosts_data[$vhosts_filename] .= '    Require all granted' . "\n";
-									$this->virtualhosts_data[$vhosts_filename] .= '    AllowOverride All' . "\n";
-								}
-							} else {
-								$this->virtualhosts_data[$vhosts_filename] .= '    Order allow,deny' . "\n";
-								$this->virtualhosts_data[$vhosts_filename] .= '    allow from all' . "\n";
-							}
 							$this->virtualhosts_data[$vhosts_filename] .= '  </Directory>' . "\n";
 						}
 					}
@@ -314,19 +292,6 @@ class apache extends HttpConfigBase
 							$this->virtualhosts_data[$vhosts_filename] .= '     Action php5-fastcgi /fastcgiphp' . "\n";
 							$this->virtualhosts_data[$vhosts_filename] .= '      Options +ExecCGI' . "\n";
 							$this->virtualhosts_data[$vhosts_filename] .= '    </FilesMatch>' . "\n";
-							// >=apache-2.4 enabled?
-							if (Settings::Get('system.apache24') == '1') {
-								$mypath_dir = new frxDirectory($mypath);
-								// only create the require all granted if there is not active directory-protection
-								// for this path, as this would be the first require and therefore grant all access
-								if ($mypath_dir->isUserProtected() == false) {
-									$this->virtualhosts_data[$vhosts_filename] .= '    Require all granted' . "\n";
-									$this->virtualhosts_data[$vhosts_filename] .= '    AllowOverride All' . "\n";
-								}
-							} else {
-								$this->virtualhosts_data[$vhosts_filename] .= '    Order allow,deny' . "\n";
-								$this->virtualhosts_data[$vhosts_filename] .= '    allow from all' . "\n";
-							}
 							$this->virtualhosts_data[$vhosts_filename] .= '  </Directory>' . "\n";
 							$this->virtualhosts_data[$vhosts_filename] .= '  Alias /fastcgiphp ' . $php->getInterface()->getAliasConfigDir() . $srvName . "\n";
 						}
@@ -598,14 +563,6 @@ class apache extends HttpConfigBase
 			$webroot_text .= '  # Using docroot for deactivated users...' . "\n";
 			$webroot_text .= '  DocumentRoot "' . makeCorrectDir(Settings::Get('system.deactivateddocroot')) . "\"\n";
 			$webroot_text .= '  <Directory "' . makeCorrectDir(Settings::Get('system.deactivateddocroot')) . '">' . "\n";
-			// >=apache-2.4 enabled?
-			if (Settings::Get('system.apache24') == '1') {
-				$webroot_text .= '    Require all granted' . "\n";
-				$webroot_text .= '    AllowOverride All' . "\n";
-			} else {
-				$webroot_text .= '    Order allow,deny' . "\n";
-				$webroot_text .= '    allow from all' . "\n";
-			}
 			$webroot_text .= '  </Directory>' . "\n";
 			$this->_deactivated = true;
 		} else {
@@ -1082,19 +1039,7 @@ class apache extends HttpConfigBase
 				if ($cperlenabled && isset($row_diroptions['options_cgi']) && $row_diroptions['options_cgi'] == '1') {
 					$this->diroptions_data[$diroptions_filename] .= '  AllowOverride None' . "\n";
 					$this->diroptions_data[$diroptions_filename] .= '  AddHandler cgi-script .cgi .pl' . "\n";
-					// >=apache-2.4 enabled?
-					if (Settings::Get('system.apache24') == '1') {
-						$mypath_dir = new frxDirectory($row_diroptions['path']);
-						// only create the require all granted if there is not active directory-protection
-						// for this path, as this would be the first require and therefore grant all access
-						if ($mypath_dir->isUserProtected() == false) {
-							$this->diroptions_data[$diroptions_filename] .= '  Require all granted' . "\n";
-							// $this->diroptions_data[$diroptions_filename] .= ' AllowOverride All' . "\n";
-						}
-					} else {
-						$this->diroptions_data[$diroptions_filename] .= '  Order allow,deny' . "\n";
-						$this->diroptions_data[$diroptions_filename] .= '  Allow from all' . "\n";
-					}
+
 					$this->logger->logAction(CRON_ACTION, LOG_INFO, 'Enabling perl execution for ' . $row_diroptions['path']);
 
 					// check for suexec-workaround, #319

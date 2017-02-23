@@ -50,15 +50,6 @@ class apache_fcgid extends apache
 
 					$mypath_dir = new frxDirectory($domain['documentroot']);
 
-				    // only create the require all granted if there is not active directory-protection
-				    // for this path, as this would be the first require and therefore grant all access
-				    if ($mypath_dir->isUserProtected() == false) {
-						$php_options_text.= '  <Directory "' . makeCorrectDir($domain['documentroot']) . '">' . "\n";
-					    $php_options_text.= '    Require all granted' . "\n";
-						$php_options_text.= '    AllowOverride All' . "\n";
-						$php_options_text.= '  </Directory>' . "\n";
-				    }
-
 				} else {
 					$php_options_text.= '  FastCgiExternalServer ' . $php->getInterface()->getAliasConfigDir() . $srvName . ' -socket ' . $php->getInterface()->getSocketFile()  . ' -idle-timeout ' . Settings::Get('phpfpm.idle_timeout') . "\n";
 					$php_options_text.= '  <Directory "' . makeCorrectDir($domain['documentroot']) . '">' . "\n";
@@ -67,19 +58,6 @@ class apache_fcgid extends apache
 					$php_options_text.= '      Action php5-fastcgi /fastcgiphp' . "\n";
 					$php_options_text.= '      Options +ExecCGI' . "\n";
 					$php_options_text.= '    </FilesMatch>' . "\n";
-					// >=apache-2.4 enabled?
-					if (Settings::Get('system.apache24') == '1') {
-					    $mypath_dir = new frxDirectory($domain['documentroot']);
-					    // only create the require all granted if there is not active directory-protection
-					    // for this path, as this would be the first require and therefore grant all access
-					    if ($mypath_dir->isUserProtected() == false) {
-						    $php_options_text.= '    Require all granted' . "\n";
-							$php_options_text.= '    AllowOverride All' . "\n";
-					    }
-					} else {
-						$php_options_text.= '    Order allow,deny' . "\n";
-						$php_options_text.= '    allow from all' . "\n";
-					}
 					$php_options_text.= '  </Directory>' . "\n";
 					$php_options_text.= '  Alias /fastcgiphp ' . $php->getInterface()->getAliasConfigDir() . $srvName . "\n";
 				}
@@ -105,19 +83,6 @@ class apache_fcgid extends apache
 					}
 					$php_options_text.= '      Options +ExecCGI' . "\n";
 					$php_options_text.= '    </FilesMatch>' . "\n";
-					// >=apache-2.4 enabled?
-					if (Settings::Get('system.apache24') == '1') {
-					    $mypath_dir = new frxDirectory($domain['documentroot']);
-					    // only create the require all granted if there is not active directory-protection
-					    // for this path, as this would be the first require and therefore grant all access
-					    if ($mypath_dir->isUserProtected() == false) {
-						    $php_options_text.= '    Require all granted' . "\n";
-							$php_options_text.= '    AllowOverride All' . "\n";
-					    }
-					} else {
-						$php_options_text.= '    Order allow,deny' . "\n";
-						$php_options_text.= '    allow from all' . "\n";
-					}
 					$php_options_text.= '  </Directory>' . "\n";
 				}
 			}
