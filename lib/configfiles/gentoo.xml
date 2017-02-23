@@ -76,6 +76,16 @@ Alias "/.well-known/acme-challenge" "{{settings.system.letsencryptchallengepath}
 ]]>
 						</content>
 					</file>
+					<file name="{{settings.system.apachedirectorypermissionsconf}}">
+						<content><![CDATA[
+<Directory "{{settings.system.documentroot_prefix}}">
+	Order Allow, Deny
+	Allow from all
+	AllowOverride all
+</Directory>
+]]>
+						</content>
+					</file>
 					<command><![CDATA[rc-update add apache2 default]]></command>
 					<command><![CDATA[/etc/init.d/apache2 restart]]></command>
 				</daemon>
@@ -103,6 +113,29 @@ Alias "/.well-known/acme-challenge" "{{settings.system.letsencryptchallengepath}
 Alias "/.well-known/acme-challenge" "{{settings.system.letsencryptchallengepath}}/.well-known/acme-challenge"
 <Directory "{{settings.system.letsencryptchallengepath}}/.well-known/acme-challenge">
 	Require all granted
+</Directory>
+]]>
+						</content>
+					</file>
+					<file name="{{settings.system.apachedirectorypermissionsconf}}">
+						<visibility mode="true">{{settings.system.apache24}}
+						</visibility>
+						<content><![CDATA[
+<Directory "{{settings.system.documentroot_prefix}}">
+	Require all granted
+	AllowOverride all
+</Directory>
+]]>
+						</content>
+					</file>
+					<file name="{{settings.system.apachedirectorypermissionsconf}}">
+						<visibility mode="false">{{settings.system.apache24}}
+						</visibility>
+						<content><![CDATA[
+<Directory "{{settings.system.documentroot_prefix}}">
+	Order Allow, Deny
+	Allow from all
+	AllowOverride all
 </Directory>
 ]]>
 						</content>

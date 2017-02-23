@@ -57,6 +57,29 @@ Alias "/.well-known/acme-challenge" "{{settings.system.letsencryptchallengepath}
 ]]>
 						</content>
 					</file>
+					<file name="{{settings.system.apachedirectorypermissionsconf}}">
+						<visibility mode="true">{{settings.system.apache24}}
+						</visibility>
+						<content><![CDATA[
+<Directory "{{settings.system.documentroot_prefix}}">
+	Require all granted
+	AllowOverride all
+</Directory>
+]]>
+						</content>
+					</file>
+					<file name="{{settings.system.apachedirectorypermissionsconf}}">
+						<visibility mode="false">{{settings.system.apache24}}
+						</visibility>
+						<content><![CDATA[
+<Directory "{{settings.system.documentroot_prefix}}">
+	Order Allow, Deny
+	Allow from all
+	AllowOverride all
+</Directory>
+]]>
+						</content>
+					</file>
 					<command><![CDATA[systemctl reload-or-restart httpd.service]]></command>
 				</daemon>
 			</service>
