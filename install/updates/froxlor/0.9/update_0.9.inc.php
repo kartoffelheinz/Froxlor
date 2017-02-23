@@ -3593,3 +3593,14 @@ if (isFroxlorVersion('0.9.38.6')) {
 	showUpdateStep("Updating from 0.9.38.6 to 0.9.38.7", false);
 	updateToVersion('0.9.38.7');
 }
+
+if (isDatabaseVersion('201612110')) {
+
+	showUpdateStep("Adding system setting for apache directory permission configuration file");
+	$websrv_default = "/etc/apache2/conf-enabled/directorypermissions.conf";
+
+	Settings::AddNew("system.apachedirectorypermissionsconf", makeCorrectFile($websrv_default));
+	lastStepStatus(0);
+
+	updateToDbVersion('201702230');
+}
